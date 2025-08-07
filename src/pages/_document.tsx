@@ -4,7 +4,6 @@ export default function Document() {
     return (
         <Html lang="en">
             <Head>
-                <title>Zen</title>
                 <link rel="manifest" href="manifest.json"></link>
             </Head>
             <body>

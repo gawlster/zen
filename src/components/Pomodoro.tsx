@@ -47,26 +47,47 @@ export default function Pomodoro() {
         return () => {
             if (intervalRef.current) clearInterval(intervalRef.current);
         };
-    }, [isRunning]);
+    }, [isRunning, secondsRemaining]);
+
+    const cancelAudio = useCallback(() => {
+        if (audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+            audioRef.current = null;
+        }
+    }, []);
+
+    const onTimerStart = useCallback(() => {
+        if (!timeInput) return;
+        cancelAudio();
+        if (cycle == Cycle.WORK) {
+            audioRef.current = new Audio("/audio/MidnightCityAlarm.mp3");
+        } else {
+            audioRef.current = new Audio("/audio/SunsetLoverAlarm.mp3");
+        }
+        audioRef.current.play().then(() => {
+            audioRef.current?.pause();
+            audioRef.current!.currentTime = 0;
+        });
+        setIsRunning(true);
+        setSecondsRemaining(timeInput);
+        setTotalSeconds(timeInput);
+    }, [timeInput, cycle, cancelAudio]);
 
     const onTimerEnd = useCallback(() => {
         setIsRunning(false);
         setIsModalOpen(true);
         setIsConfettiExploding(true);
-        if (cycle == Cycle.WORK) {
-            audioRef.current = new Audio("/audio/MidnightCityAlarm.mp3");
-            audioRef.current.play();
-        } else {
-            audioRef.current = new Audio("/audio/SunsetLoverAlarm.mp3");
+        if (audioRef.current) {
             audioRef.current.play();
         }
-    }, [cycle]);
+    }, []);
 
     useEffect(() => {
         if (secondsRemaining <= 0 && isRunning) {
             onTimerEnd();
         }
-    }, [secondsRemaining, isRunning]);
+    }, [secondsRemaining, isRunning, onTimerEnd]);
 
     const progress = useMemo(() => {
         if (!isRunning) return 1;
@@ -81,9 +102,8 @@ export default function Pomodoro() {
                         <button
                             onClick={() => {
                                 setCycle(Cycle.SHORT_BREAK);
-                                setSecondsRemaining(5 * 60);
-                                setTotalSeconds(5 * 60);
-                                setIsRunning(true);
+                                setTimeInput(5 * 60);
+                                onTimerStart();
                             }}
                         >
                             5 min short break
@@ -92,9 +112,8 @@ export default function Pomodoro() {
                         <button
                             onClick={() => {
                                 setCycle(Cycle.SHORT_BREAK);
-                                setSecondsRemaining(10 * 60);
-                                setTotalSeconds(10 * 60);
-                                setIsRunning(true);
+                                setTimeInput(10 * 60);
+                                onTimerStart();
                             }}
                         >
                             10 min short break
@@ -103,9 +122,8 @@ export default function Pomodoro() {
                     <button
                         onClick={() => {
                             setCycle(Cycle.LONG_BREAK);
-                            setSecondsRemaining(15 * 60);
-                            setTotalSeconds(15 * 60);
-                            setIsRunning(true);
+                            setTimeInput(15 * 60);
+                            onTimerStart();
                         }}
                     >
                         15 min long break
@@ -118,9 +136,8 @@ export default function Pomodoro() {
                     <button
                         onClick={() => {
                             setCycle(Cycle.WORK);
-                            setSecondsRemaining(25 * 60);
-                            setTotalSeconds(25 * 60);
-                            setIsRunning(true);
+                            setTimeInput(25 * 60);
+                            onTimerStart();
                         }}
                     >
                         25 min work session
@@ -128,9 +145,8 @@ export default function Pomodoro() {
                     <button
                         onClick={() => {
                             setCycle(Cycle.WORK);
-                            setSecondsRemaining(50 * 60);
-                            setTotalSeconds(50 * 60);
-                            setIsRunning(true);
+                            setTimeInput(50 * 60);
+                            onTimerStart();
                         }}
                     >
                         50 min work session
@@ -138,7 +154,7 @@ export default function Pomodoro() {
                 </>
             )
         }
-    }, [cycle, totalSeconds]);
+    }, [cycle, totalSeconds, onTimerStart]);
 
     return (
         <>
@@ -196,9 +212,7 @@ export default function Pomodoro() {
                                 if (!timeInput) {
                                     return;
                                 }
-                                setSecondsRemaining(timeInput);
-                                setTotalSeconds(timeInput);
-                                setIsRunning(true);
+                                onTimerStart();
                             }}
                         >
                             Start Timer
@@ -211,14 +225,7 @@ export default function Pomodoro() {
                                 {isConfettiExploding && <ConfettiExplosion onComplete={() => setIsConfettiExploding(false)} />}
                                 <h2>You just completed a {cycle.toLowerCase().replace('_', ' ')} cycle!</h2>
                                 {audioRef.current?.paused === false && (
-                                    <button
-                                        onClick={() => {
-                                            if (audioRef.current) {
-                                                audioRef.current.pause();
-                                                audioRef.current.currentTime = 0;
-                                            }
-                                        }}
-                                    >
+                                    <button onClick={cancelAudio}>
                                         Stop Alarm
                                     </button>
                                 )}

@@ -15,7 +15,7 @@ export default function Clock() {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, []);
+    }, [time]);
 
     return (
         <div className={styles.wrapper}>
