@@ -1,0 +1,71 @@
+.notification {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 14px;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 280px;
+  max-width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+}
+
+.message {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #111;
+  margin-right: 1rem;
+  white-space: nowrap;
+}
+
+.actionButton {
+  background: none;
+  color: white;
+  border: 1px solid #007aff;
+  border-radius: 50%;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.actionButton:active {
+  background: #0062cc;
+}
+
+.slideDown {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+.slideUp {
+  animation: slideUp 0.3s ease-in forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+}

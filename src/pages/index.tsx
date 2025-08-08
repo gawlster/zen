@@ -2,6 +2,7 @@ import Head from "next/head";
 import Clock from "../components/Clock";
 import Spotify from "@/components/Spotify";
 import Pomodoro from "@/components/Pomodoro";
+import WaterReminder from "@/components/WaterReminder";
 
 export default function Home() {
     return (
@@ -15,8 +16,9 @@ export default function Home() {
             <div className="background">
                 <div className="breath-sphere"></div>
                 <Clock />
-                <Spotify />
+                {/*<Spotify />*/}
                 <Pomodoro />
+                <WaterReminder />
             </div>
         </>
     );
